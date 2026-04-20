@@ -1,0 +1,275 @@
+
+
+
+Introduction
+Purpose
+
+This Software Requirements Specification (SRS) defines the functional and non-functional
+requirements for the Padanaad Dance Studio mobile application. The document serves as a single source of truth for stakeholders, including product owners, designers, developers, testers, and
+academic evaluators. It prescribes the system’s behavior, interfaces, constraints, acceptance criteria, and quality attributes to facilitate consistent understanding, effective implementation, and formal evaluation.
+Scope
+
+Padanaad Dance Studio is a mobile-first platform for Bharatanatyam learning that unifies Teachers, Students, and Parents. The app provides role-based access, structured learning content (videos, theory notes, session summaries), attendance tracking, fee payment and receipt generation, and a single unified chat for communication. The primary delivery platform is
+mobile (target width: 375px), with a clean card-based UI and an Indian classical aesthetic. Initial release targets core educational workflows, fee management, and basic analytics on dashboards.
+
+
+Overview
+
+This SRS presents the product context, user classes, system features, user interface and external interfaces, constraints, assumptions, and measurable quality requirements. It includes detailed functional decomposition across account management, content management, attendance, fee management, communications, and dashboards, aligned with a mobile-first design and a premium Bharatanatyam theme.
+
+
+
+General Description
+Product Perspective
+
+Padanaad Dance Studio is a standalone mobile application with a cloud backend. It integrates with a payment gateway for UPI and card payments and uses cloud storage for media hosting. It features a role-based access control model. The app will leverage a REST/GraphQL API for data operations and push notifications for time-sensitive updates (payments, announcements,
+attendance status). No legacy systems are replaced.
+
+Product Functions
+
+Role-based authentication: Teacher, Student, Parent; conditional routing (student age check redirects to Parent login if under 18).
+Learning content delivery: upload and manage videos, create theory notes, record session summaries; student consumption via Learning Hub.
+Attendance lifecycle: mark present/absent, save, view, and edit historical records; student/parent visibility.
+Fee management: track paid/unpaid, show total collection (teacher view); enable UPI/card payments, success confirmation, receipt issuance, and history (student/parent views).
+Unified communication: single chat stream for all users with sender name and role labeling.
+Dashboards per role: personalized overview, quick actions, announcements, and KPIs.
+
+User Classes and Characteristics
+
+Teacher: Creates and curates content; manages attendance and fees; communicates via chat; requires bulk operations and summary insights; intermediate digital literacy.
+Student: Consumes content; views attendance; pays fees; engages in announcements and chat; variable digital literacy (teenagers and adults).
+Parent: Monitors child progress and attendance; manages fee payments and history; engages in chat for administrative queries; varying digital literacy.
+Administrator (future/optional): Oversees user provisioning, batch management, and audits (not included in MVP unless otherwise approved).
+Operating Environment
+
+Mobile operating systems: Android 10+ and iOS 14+.
+Network: 3G/4G/5G/Wi-Fi; offline-tolerant for content browsing of previously cached items; online required for login, payments, and chat.
+Backend: Cloud-hosted services, managed database, object storage for media, push notification service.
+Design and Implementation Constraints
+
+Mobile-first UI: 375px base width; card layout; 20px corner radius; gradient header (Red
+→ Orange); color palette Primary #B71C1C, Secondary #E65100, Accent #FFD54F, Background #FDF6F0.
+Compliance: Payment data handled via PCI-DSS-compliant gateway; minors’ data protected; privacy-by-design for chat logs and PII.
+
+Performance: Smooth video playback using adaptive streaming; optimized media upload over constrained networks.
+Storage: Large video assets stored in cloud; device caching limited and user-clearable.
+
+Assumptions and Dependencies
+
+Assumes reliable third-party payment gateway with UPI and card support, and webhook notifications.
+Assumes cloud media CDN availability for video streaming and resumable uploads.
+Depends on push notification services (APNs/FCM) for announcements and payment confirmations.
+Assumes institutional schedule and batch definitions are maintained by Teachers.
+
+
+Functional Requirements
+User Account Management
+
+Registration and Login
+
+1.1 The system shall provide role selection (Teacher/Student/Parent) after splash screen and prior to authentication.
+1.2 The system shall authenticate users via mobile number + OTP or email + password as configured by administration.
+1.3 For Student role, the system shall prompt for date of birth and, if age is under 18 on the current date, require Parent login linkage prior to granting access.
+Profile Management
+
+2.1 Users shall view and edit personal details (name, contact, profile photo).
+Students/Parents shall view batch assignment; Teachers shall view managed batches.
+2.2 The system shall enforce role-based fields (e.g., Parent must have linked Student; Teacher must have at least one batch).
+Authorization
+
+3.1 The system shall restrict access to features per role (e.g., only Teachers can upload content and edit attendance).
+3.2 The system shall log all sensitive actions (attendance edits, fee status adjustments, content deletions) with actor, timestamp, and context.
+Content Management
+
+Teacher Content Operations
+
+4.1 Teachers shall upload videos from device; the system shall transcode and store content for adaptive playback.
+4.2 Teachers shall create and edit theory notes using a rich-text editor supporting headings, bullet lists, inline images, and hyperlinks.
+4.3 Teachers shall add session summaries linked to a batch, date, and lesson topic; summaries shall be editable.
+4.4 Teachers shall tag content by batch, level, and topic to control visibility.
+
+Student/Parent Consumption
+
+5.1 Students shall access a Learning Hub listing videos, notes, and session summaries filtered by assigned batch.
+5.2 Parents shall read-only access their child’s Learning Hub.
+5.3 The app shall track content completion status and recent activity for dashboards.
+
+Attendance System
+
+Recording and Management
+
+6.1 Teachers shall mark attendance (Present/Absent) per batch and session date via a roster view.
+6.2 The system shall save attendance and allow subsequent edits by Teachers with audit trail.
+6.3 Teachers shall view historical attendance and filter by date range, batch, and student.
+
+Visibility
+
+7.1 Students and Parents shall view attendance in a monthly calendar/list view.
+7.2 The system shall compute attendance percentage for specified periods for display on dashboards.
+Fee Management
+
+Tracking (Teacher)
+
+8.1 Teachers shall view Paid and Unpaid tabs for each batch and date range.
+8.2 The system shall display total collection for the selected period and export a summary report.
+Payment (Student/Parent)
+
+9.1 Students/Parents shall initiate payments via UPI or card through an integrated payment gateway.
+9.2 Upon successful payment, the system shall display a confirmation screen and generate a downloadable receipt.
+9.3 Users shall access payment history with status, method, and receipt links.
+
+Receipt System
+
+10.1 Receipts shall include student name, batch, amount, date, unique receipt ID, and payment method.
+10.2 Receipts shall be downloadable as PDF and retrievable from history.
+
+Communication System
+
+Unified Chat
+
+11.1 The system shall provide a single, unified chat interface visible to all authenticated users.
+11.2 Each message shall display sender name and role; timestamps and delivery status shall be visible.
+11.3 The system shall support text and links; media attachments are optional for a later release if not in scope.
+11.4 The system shall provide moderation abilities for Teachers to remove inappropriate content.
+Dashboard System 12 Teacher Dashboard
+12.1 Show quick stats: upcoming sessions, pending unpaid count, total collection (period-selectable), recent chat highlights.
+12.2 Provide quick actions: Upload Video, Add Notes, Mark Attendance.
+
+Student Dashboard
+
+13.1 Present Learning Hub shortcuts, attendance percentage (monthly), latest announcements, and pending fees with “Pay Now.”
+13.2 Provide chat entry point and recent content cards.
+
+Parent Dashboard
+
+14.1 Display child’s progress indicators (content completion proxy), attendance percentage, upcoming fees and history, and chat entry point.
+
+User Interface Requirements Navigation Flow
+Splash Screen: App logo; auto-redirect to Role Selection within 2–3 seconds.
+Role Selection: Three large cards (Teacher, Student, Parent) with icons and concise descriptions.
+Login: OTP or email/password form; Student age check; Parent linkage flow if minor.
+Dashboards: Role-specific home with top gradient header and key KPIs in cards.
+
+Primary Screens
+
+Learning Hub: Segmented tabs for Videos, Notes, Summaries; searchable and filterable; content cards show title, duration/size, and tags.
+Attendance: Teacher roster with toggle chips for Present/Absent; Student/Parent monthly calendar with colored indicators.
+Fees: Teacher view with Paid/Unpaid tabs and totals; Student/Parent payment screen with method selection (UPI/Card), amount breakdown, success screen with receipt button, and history list.
+Chat: Single-thread view; message bubbles labeled with sender name and role; input with send action.
+Accessibility and Usability
+
+Contrast: Minimum WCAG AA contrast for text against #FDF6F0 and over gradient header.
+Touch targets: Minimum 44x44 px; consistent spacing; clear affordances on cards and buttons.
+Feedback: Inline validation, loading states, empty states, and success/error toasts
+
+External Interface Requirements
+
+Payment Interface
+
+The app shall integrate with a PCI-DSS-compliant payment gateway exposing UPI and card rails.
+It shall support secure redirection/SDK flows, tokenization for cards where permitted, and webhook callbacks to update transaction status.
+On success, the app shall create a receipt record and expose a PDF download; on failure, it shall present actionable error guidance and allow retry.
+APIs and Services
+
+Backend API: REST/GraphQL endpoints secured with OAuth 2.0/JWT; rate limiting on chat and uploads.
+Media: Cloud object storage + CDN; resumable upload API for videos; adaptive HLS/DASH playback.
+Notifications: FCM/APNs for announcements, payment confirmations, and system alerts.
+
+Non-Functional Requirements
+
+Performance
+
+App shall load dashboard content within 2 seconds on a 4G connection for 90th percentile users.
+Video playback shall start within 3 seconds (95th percentile) with adaptive bitrate streaming.
+Search and filter operations in Learning Hub shall return results within 500 ms after network response receipt.
+Security
+
+All data in transit via TLS 1.2+; passwords hashed with modern algorithms; secrets stored securely using platform keychains.
+Role-based authorization enforced server-side; audit trails for sensitive operations.
+PII minimization; least-privilege access; chat content moderated and logged per policy.
+
+Reliability
+
+Target 99.5% monthly backend availability; graceful degradation under partial outages.
+Automatic retry for transient network failures; idempotent payment status updates from webhooks.
+Usability
+
+Onboarding shall be completable within 2 minutes for a new user; clear CTAs; consistent navigation.
+Content organization aligned to batch, topic, and level for quick discovery.
+
+Maintainability
+
+Modular services for auth, content, attendance, fees, and chat; standardized API versioning.
+Logging/monitoring with structured logs and dashboards for error rates, latency, and payment reconciliation.
+
+Scalability
+
+Horizontally scalable backend and CDN-backed media delivery; chat service to handle bursts through message queues.
+Database indexing on user, batch, and date dimensions to support attendance and fee queries at scale.
+Schedule and Budget
+Indicative Milestones
+
+Phase 1 (4–6 weeks): Core auth and role routing; dashboards; Learning Hub read; unified chat MVP.
+Phase 2 (4–6 weeks): Teacher content upload/edit; attendance marking and views; announcements; basic analytics.
+Phase 3 (4–6 weeks): Payment integration (UPI/Card); receipts; fee tracking and history; exportable reports.
+Phase 4 (2–4 weeks): Hardening, accessibility, performance tuning, UAT, and release preparation.
+Budget Considerations
+
+Cloud costs: compute, database, storage/CDN for media, notifications.
+Third-party: payment gateway fees per transaction; optional media processing costs for transcoding.
+Engineering/design/testing resources proportional to phases; contingency for compliance and security reviews.
+
+
+Appendices
+Glossary
+
+Term
+Definatiton
+UI
+User Interface. The visual design and layout of the application that users interact with.
+Dashboard
+The main screen of the app that displays key features and navigation options based on user role (Teacher, Student, Parent).
+Teacher
+A user role responsible for managing content,
+
+
+
+
+
+
+attendance, fees, and communication within the app.
+Student
+A user role who accesses learning materials, tracks attendance, communicates, and makes fee payments.
+Parents
+User role who monitor child progress
+Attendance
+A feature that allows teachers to mark
+students as present or absent and track their participation.
+Fee Management
+A system that tracks fee payments, unpaid dues, and total collection.
+Payment Gateway
+A system used to process online payments via UPI or Card securely
+Receipt
+A digital proof of payment generated after successful fee payment.
+Content Management
+A feature where teachers upload, edit, and
+manage videos, notes, and session summaries.
+Chat System
+A communication feature that allows teacher,student and parents to send and receive message in single interface
+Login Authentication
+A Security process where user verify their identity using email and password
+Profile
+A section where user information such as name, role, and details are stored and managed.
+API
+Application Programming Interface. Used for communication between frontend and backend systems.
+Backend
+The server-side system responsible for data processing , storage and logic
+Frontend
+The user-facing part of the application where user interact with ui elements
+
+
+
+References
+
+IEEE SRS standard structure (adapted to academic submission).
+Platform guidelines for mobile accessibility and touch targets.
